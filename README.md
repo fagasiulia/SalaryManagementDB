@@ -4,10 +4,10 @@ This program will let the user manage a salary database.
 
 The SalaryManagement.db contains the following tables:
 
-Employee(Id, First_Name, Last_Name, Designation, Experince)
-Salary(Employee_Id, Current_Salary)
-Designation_Group(Designation, Salary_Group)
-Salary_Range(Salary_Group, Experience, Range)
+1.Employee(Id, First_Name, Last_Name, Designation, Experince)
+2.Salary(Employee_Id, Current_Salary)
+3.Designation_Group(Designation, Salary_Group)
+4.Salary_Range(Salary_Group, Experience, Range)
 
 Using this program the perform the following operations:
 
