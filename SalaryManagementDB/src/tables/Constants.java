@@ -31,5 +31,45 @@ public class Constants {
 	public static final String ST_EMPLOYEE_ID_COLUMN = "Employee_Id";
 	public static final String ST_CURRENT_SALARY_COLUMN = "Current_Salary";
 	
+	public static final String QUERY_EMPLOYEE_BY_LAST_NAME = "SELECT * FROM " + EMPLOYEE_TABLE + " WHERE " 
+	       + ET_LAST_NAME_COLUMN + "= ?";
+	
+	public static final String QUERY_EMPLOYEE_BY_ID = "SELECT * FROM " + EMPLOYEE_TABLE + " WHERE " 
+		   + ET_ID_COLUMN + "= ?";
+	
+	public static final String QUERY_EMPLOYEE_SALARY = "SELECT " + ST_CURRENT_SALARY_COLUMN + " FROM " 
+			+ SALARY_TABLE + " WHERE " + ST_EMPLOYEE_ID_COLUMN + " = ?";
+	
+	/*SELECT Employee.Id, Employee.First_Name, Employee.Last_Name, Employee.Designation, Employee.Experience, Salary.Current_Salary, Salary_Range.Range 
+	FROM Employee 
+	INNER JOIN Salary ON Salary.Employee_Id = Employee.Id 
+	INNER JOIN Designation_Group ON Designation_Group.Designation = Employee.Designation
+	INNER JOIN Salary_Range ON Salary_Range.Salary_Group = Designation_Group.Salary_Group  AND Salary_Range.Experience = Employee.Experience
+	WHERE Employee.Last_Name = "Johnson" AND Employee. First_Name = 'Emma';*/
+	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT " + EMPLOYEE_TABLE +"." + ET_ID_COLUMN
+			+ ", " + EMPLOYEE_TABLE + "." + ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "." + ET_LAST_NAME_COLUMN
+			+ ", " + EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + ", " + EMPLOYEE_TABLE + "." + ET_EXPERIENCE_COULMN 
+			+ ", " + SALARY_TABLE + "." + ST_CURRENT_SALARY_COLUMN + ", " + SALARY_RANGE_TABLE + "." + SRT_RANGE_COULMN
+			+ " FROM " + EMPLOYEE_TABLE + " INNER JOIN " + SALARY_TABLE + " ON " + SALARY_TABLE + "." + ST_EMPLOYEE_ID_COLUMN
+			+ " = " + EMPLOYEE_TABLE + "." + ET_ID_COLUMN + "INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON " 
+			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = " + EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN
+			+ "INNER JOIN " + SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "." + SRT_SALARY_GROUP_COLUMN + " = " 
+			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
+			+ SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "." + ET_EXPERIENCE_COULMN + " WHERE " + EMPLOYEE_TABLE
+			+ "." + ET_LAST_NAME_COLUMN + "=? AND " + EMPLOYEE_TABLE + "." + ET_FIRST_NAME_COLUMN + "=?";
+	
+	public static final String INSERT_EMPLOYEE = "INSERT INTO " + EMPLOYEE_TABLE + " ( " + ET_FIRST_NAME_COLUMN + ", "
+			+ ET_LAST_NAME_COLUMN + ", " + ET_DESIGNATION_COULMN + ", " + ET_EXPERIENCE_COULMN 
+			+ ") VALUES ( =?, =?, =?, =?)";
+	
+	public static final String UPDATE_EMPLOYEE_LAST_NAME = "UPDATE " + EMPLOYEE_TABLE + " SET " + ET_LAST_NAME_COLUMN 
+			+ "= ? WHERE " + ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+	
+	public static final String UPDATE_EMPLOYEE_DESIGNATION = "UPDATE " + EMPLOYEE_TABLE + " SET " + ET_DESIGNATION_COULMN 
+			+ "= ? WHERE " + ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+	
+	public static final String UPDATE_EMPLOYEE_EXPERIENCE = "UPDATE " + EMPLOYEE_TABLE + " SET " + ET_EXPERIENCE_COULMN 
+			+ "= ? WHERE " + ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+	
 	
 }
