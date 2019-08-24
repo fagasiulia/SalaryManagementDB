@@ -1,6 +1,10 @@
 package tables;
 
-public class Constants {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Datasource {
 	
 	public static final String DB_NAME = "SalaryManagement.db";
 	public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
@@ -71,5 +75,27 @@ public class Constants {
 	public static final String UPDATE_EMPLOYEE_EXPERIENCE = "UPDATE " + EMPLOYEE_TABLE + " SET " + ET_EXPERIENCE_COULMN 
 			+ "= ? WHERE " + ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 	
+	private Connection conn;
+	public boolean open() {
+		try {
+			conn = DriverManager.getConnection(CONNECTION_STRING);
+			return true;
+			
+		}catch(SQLException e) {
+			System.out.println("Couldn't connect to database: " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public void close() {
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		}catch(SQLException e) {
+			System.out.println("Unable to close the database: " + e.getMessage());
+		}
+		
+	}
 	
 }
