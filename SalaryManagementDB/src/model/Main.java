@@ -1,4 +1,4 @@
-package tables;
+package model;
 
 public class Main {
 
@@ -8,6 +8,7 @@ public class Main {
 			System.out.println("Can't open datasource");
 			return;
 		}
+		datasource.queryEmployees();
 		datasource.close();
 	}
 

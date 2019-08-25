@@ -1,8 +1,11 @@
-package tables;
+package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 public class Datasource {
 	
@@ -34,6 +37,8 @@ public class Datasource {
 	public static final String SALARY_TABLE = "Salary";
 	public static final String ST_EMPLOYEE_ID_COLUMN = "Employee_Id";
 	public static final String ST_CURRENT_SALARY_COLUMN = "Current_Salary";
+	
+	public static final String QUERY_EMPLOYEES= "SELECT * FROM " + EMPLOYEE_TABLE;
 	
 	public static final String QUERY_EMPLOYEE_BY_LAST_NAME = "SELECT * FROM " + EMPLOYEE_TABLE + " WHERE " 
 	       + ET_LAST_NAME_COLUMN + "= ?";
@@ -95,7 +100,29 @@ public class Datasource {
 		}catch(SQLException e) {
 			System.out.println("Unable to close the database: " + e.getMessage());
 		}
+	}
+	
+	public void queryEmployees(){
+		Statement statement = null;
+		ResultSet results = null;
+		try {
+			statement = conn.createStatement();
+			results = statement.executeQuery(QUERY_EMPLOYEES);
+			
+			while(results.next()) {
+				System.out.println(results.getInt(ET_ID_COLUMN) + " " 
+			    + results.getString(ET_FIRST_NAME_COLUMN) + " "
+			    + results.getString(ET_LAST_NAME_COLUMN) + " "
+			    + results.getString(ET_DESIGNATION_COULMN) + " "
+			    + results.getString(ET_EXPERIENCE_COULMN));
+			}
+			
+		}catch(SQLException e) {
+			System.out.println("Unable to query employees" + e.getMessage());
+			
+		}
 		
 	}
+	
 	
 }
