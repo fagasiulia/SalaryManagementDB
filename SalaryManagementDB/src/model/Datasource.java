@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Datasource {
@@ -102,23 +103,27 @@ public class Datasource {
 		}
 	}
 	
-	public void queryEmployees(){
-		Statement statement = null;
-		ResultSet results = null;
-		try {
-			statement = conn.createStatement();
-			results = statement.executeQuery(QUERY_EMPLOYEES);
+	public List<Employee> queryEmployees(){
+		
+		try(Statement statement = conn.createStatement();
+				ResultSet results = statement.executeQuery(QUERY_EMPLOYEES)) {
+ 
+			List<Employee> employeeList= new ArrayList<>();
 			
 			while(results.next()) {
-				System.out.println(results.getInt(ET_ID_COLUMN) + " " 
-			    + results.getString(ET_FIRST_NAME_COLUMN) + " "
-			    + results.getString(ET_LAST_NAME_COLUMN) + " "
-			    + results.getString(ET_DESIGNATION_COULMN) + " "
-			    + results.getString(ET_EXPERIENCE_COULMN));
+				Employee newEmployee = new Employee();
+				newEmployee.setId(results.getInt(ET_ID_COLUMN));
+				newEmployee.setFirstName(results.getString(ET_FIRST_NAME_COLUMN));
+				newEmployee.setLastName(results.getString(ET_LAST_NAME_COLUMN));
+                newEmployee.setDesignation(results.getString(ET_DESIGNATION_COULMN));
+                newEmployee.setExperience(results.getInt(ET_EXPERIENCE_COULMN));
+
+				employeeList.add(newEmployee); 
 			}
-			
+			return employeeList;
 		}catch(SQLException e) {
 			System.out.println("Unable to query employees" + e.getMessage());
+			return null;
 			
 		}
 		

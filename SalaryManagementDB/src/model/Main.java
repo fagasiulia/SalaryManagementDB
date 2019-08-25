@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -8,7 +10,16 @@ public class Main {
 			System.out.println("Can't open datasource");
 			return;
 		}
-		datasource.queryEmployees();
+		List<Employee> employeeList = datasource.queryEmployees();
+		if(employeeList == null) {
+			System.out.println("No employee found");
+		}
+		else {
+			for(Employee e : employeeList) {
+				e.getLastName();
+			}
+		}
+	
 		datasource.close();
 	}
 
