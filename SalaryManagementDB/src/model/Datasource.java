@@ -1,6 +1,14 @@
-package tables;
+package model;
 
-public class Constants {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Datasource {
 	
 	public static final String DB_NAME = "SalaryManagement.db";
 	public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
@@ -30,6 +38,8 @@ public class Constants {
 	public static final String SALARY_TABLE = "Salary";
 	public static final String ST_EMPLOYEE_ID_COLUMN = "Employee_Id";
 	public static final String ST_CURRENT_SALARY_COLUMN = "Current_Salary";
+	
+	public static final String QUERY_EMPLOYEES= "SELECT * FROM " + EMPLOYEE_TABLE;
 	
 	public static final String QUERY_EMPLOYEE_BY_LAST_NAME = "SELECT * FROM " + EMPLOYEE_TABLE + " WHERE " 
 	       + ET_LAST_NAME_COLUMN + "= ?";
@@ -70,6 +80,54 @@ public class Constants {
 	
 	public static final String UPDATE_EMPLOYEE_EXPERIENCE = "UPDATE " + EMPLOYEE_TABLE + " SET " + ET_EXPERIENCE_COULMN 
 			+ "= ? WHERE " + ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+	
+	private Connection conn;
+	public boolean open() {
+		try {
+			conn = DriverManager.getConnection(CONNECTION_STRING);
+			return true;
+			
+		}catch(SQLException e) {
+			System.out.println("Couldn't connect to database: " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public void close() {
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		}catch(SQLException e) {
+			System.out.println("Unable to close the database: " + e.getMessage());
+		}
+	}
+	
+	public List<Employee> queryEmployees(){
+		
+		try(Statement statement = conn.createStatement();
+				ResultSet results = statement.executeQuery(QUERY_EMPLOYEES)) {
+ 
+			List<Employee> employeeList= new ArrayList<>();
+			
+			while(results.next()) {
+				Employee newEmployee = new Employee();
+				newEmployee.setId(results.getInt(ET_ID_COLUMN));
+				newEmployee.setFirstName(results.getString(ET_FIRST_NAME_COLUMN));
+				newEmployee.setLastName(results.getString(ET_LAST_NAME_COLUMN));
+                newEmployee.setDesignation(results.getString(ET_DESIGNATION_COULMN));
+                newEmployee.setExperience(results.getInt(ET_EXPERIENCE_COULMN));
+
+				employeeList.add(newEmployee); 
+			}
+			return employeeList;
+		}catch(SQLException e) {
+			System.out.println("Unable to query employees" + e.getMessage());
+			return null;
+			
+		}
+		
+	}
 	
 	
 }

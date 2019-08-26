@@ -1,4 +1,4 @@
-package tables;
+package model;
 
 public class Designation_Group {
 	private String designation;

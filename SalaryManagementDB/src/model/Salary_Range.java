@@ -1,4 +1,4 @@
-package tables;
+package model;
 
 public class Salary_Range {
 	private int salaryGroup;
