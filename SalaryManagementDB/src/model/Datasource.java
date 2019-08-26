@@ -21,6 +21,8 @@ public class Datasource {
 	public static final String DESIGNATION_GROUP_TABLE = "Designation_Group";
 	public static final String DGT_DESIGNATION_COULMN = "Designation";
 	public static final String DGT_SALARY_GROUP_COLUMN = "Salary_Group";
+	public static final int DGT_INDEX_DESIGNATION_COLUMN = 1;
+	public static final int DGT_INDEX_SALARY_GROUP_COLUMN = 2;
 	
 	public static final String EMPLOYEE_TABLE = "Employee";
 	public static final String ET_ID_COLUMN = "Id";
@@ -28,16 +30,26 @@ public class Datasource {
 	public static final String ET_LAST_NAME_COLUMN = "Last_Name";
 	public static final String ET_DESIGNATION_COULMN = "Designation";
 	public static final String ET_EXPERIENCE_COULMN = "Experience";
+	public static final int ET_INDEX_ID_COLUMN = 1;
+	public static final int ET_INDEX_FIRST_NAME_COLUMN = 2;
+	public static final int ET_INDEX_LAST_NAME_COLUMN = 3;
+	public static final int ET_INDEX_DESIGNATION_COLUMN = 4;
+	public static final int ET_INDEX_EXPERIENCE_COLUMN = 5;
 	
 	
 	public static final String SALARY_RANGE_TABLE = "Salary_Range";
 	public static final String SRT_SALARY_GROUP_COLUMN = "Salary_Group";
 	public static final String SRT_EXPERIENCE_COULMN = "Experience";
 	public static final String SRT_RANGE_COULMN = "Range";
+	public static final int SRT_INDEX_SALARY_GROUP_COLUMN = 1;
+	public static final int SRT_INDEX_EXPERIENCE_COLUMN = 2;
+	public static final int SRT_INDEX_RANGE_COLUMN = 3;
 	
 	public static final String SALARY_TABLE = "Salary";
 	public static final String ST_EMPLOYEE_ID_COLUMN = "Employee_Id";
 	public static final String ST_CURRENT_SALARY_COLUMN = "Current_Salary";
+	public static final int ST_INDEX_ID_COLUMN = 1;
+	public static final int ST_INDEX_CURRENT_SALARY_COLUMN = 2;
 	
 	public static final String QUERY_EMPLOYEES= "SELECT * FROM " + EMPLOYEE_TABLE;
 	
@@ -112,11 +124,11 @@ public class Datasource {
 			
 			while(results.next()) {
 				Employee newEmployee = new Employee();
-				newEmployee.setId(results.getInt(ET_ID_COLUMN));
-				newEmployee.setFirstName(results.getString(ET_FIRST_NAME_COLUMN));
-				newEmployee.setLastName(results.getString(ET_LAST_NAME_COLUMN));
-                newEmployee.setDesignation(results.getString(ET_DESIGNATION_COULMN));
-                newEmployee.setExperience(results.getInt(ET_EXPERIENCE_COULMN));
+				newEmployee.setId(results.getInt(ET_INDEX_ID_COLUMN));
+				newEmployee.setFirstName(results.getString(ET_INDEX_FIRST_NAME_COLUMN));
+				newEmployee.setLastName(results.getString(ET_INDEX_LAST_NAME_COLUMN));
+                newEmployee.setDesignation(results.getString(ET_INDEX_DESIGNATION_COLUMN));
+                newEmployee.setExperience(results.getInt(ET_INDEX_EXPERIENCE_COLUMN));
 
 				employeeList.add(newEmployee); 
 			}

@@ -16,7 +16,10 @@ public class Main {
 		}
 		else {
 			for(Employee e : employeeList) {
-				e.getLastName();
+				System.out.println("Id: " + e.getId()
+						+ " Name: " + e.getFirstName() + " " + e.getLastName()
+						+ " Designation: " + e.getDesignation() 
+						+ " Experience: " + e.getExperience());
 			}
 		}
 	
