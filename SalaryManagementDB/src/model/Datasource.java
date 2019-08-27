@@ -2,6 +2,7 @@ package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -118,10 +119,13 @@ public class Datasource {
 			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
 	private Connection conn;
+	private PreparedStatement prepStQueryEmployeeByLastName;
 
 	public boolean open() {
 		try {
 			conn = DriverManager.getConnection(CONNECTION_STRING);
+			prepStQueryEmployeeByLastName = conn
+					.prepareStatement(QUERY_EMPLOYEE_BY_LAST_NAME);
 			return true;
 
 		} catch (SQLException e) {
@@ -133,6 +137,9 @@ public class Datasource {
 
 	public void close() {
 		try {
+			if(prepStQueryEmployeeByLastName != null){
+				prepStQueryEmployeeByLastName.close();
+			}
 			if (conn != null) {
 				conn.close();
 			}
@@ -185,9 +192,10 @@ public class Datasource {
 	}
 
 	public List<Employee> getEmployeeByLastName(String lastName) {
-		try (Statement statement = conn.createStatement();
-				ResultSet results = statement
-						.executeQuery(QUERY_EMPLOYEE_BY_LAST_NAME)) {
+		try {
+			prepStQueryEmployeeByLastName.setString(1, lastName);
+
+			ResultSet results = prepStQueryEmployeeByLastName.executeQuery();
 			List<Employee> employeeList = new ArrayList<>();
 
 			while (results.next()) {
@@ -212,19 +220,19 @@ public class Datasource {
 			return null;
 		}
 	}
-	
-	public void queryEmployeeMetaData(){
-		try(Statement statement = conn.createStatement();
-				ResultSet result = statement.executeQuery(QUERY_EMPLOYEES)){
-			
+
+	public void queryEmployeeMetaData() {
+		try (Statement statement = conn.createStatement();
+				ResultSet result = statement.executeQuery(QUERY_EMPLOYEES)) {
+
 			ResultSetMetaData meta = result.getMetaData();
 			int numColumns = meta.getColumnCount();
-			for(int i = 1; i <= numColumns; i++){
+			for (int i = 1; i <= numColumns; i++) {
 				System.out.format("Column %d in Employee table is named %s\n",
 						i, meta.getColumnName(i));
 			}
-			
-		}catch(SQLException e){
+
+		} catch (SQLException e) {
 			System.out.println("Query failed: " + e.getMessage());
 		}
 	}

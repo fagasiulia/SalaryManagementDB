@@ -37,6 +37,18 @@ public class Main {
 //		}
 		datasource.queryEmployeeMetaData();
 	
+		List<Employee> employeeList = datasource.getEmployeeByLastName("Johnson");
+		if(employeeList == null) {
+			System.out.println("No employee found");
+		}
+		else {
+			for(Employee e : employeeList) {
+				System.out.println("Id: " + e.getId()
+						+ " Name: " + e.getFirstName() + " " + e.getLastName()
+						+ " Designation: " + e.getDesignation() 
+						+ " Experience: " + e.getExperience());
+			}
+		}
 		datasource.close();
 	}
 
