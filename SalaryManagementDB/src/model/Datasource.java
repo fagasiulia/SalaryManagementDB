@@ -346,31 +346,41 @@ public class Datasource {
 	}
 	
 	
-	public int updateEmployeeLastName(String newName, String lastName, String firstName){
+	public boolean updateEmployeeLastName(String newName, String lastName, String firstName){
 		try{
 			prepStUpdateEmployeeLastName.setString(1, newName);
 			prepStUpdateEmployeeLastName.setString(2, lastName);
 			prepStUpdateEmployeeLastName.setString(3, firstName);
 			
 			int update = prepStUpdateEmployeeLastName.executeUpdate();
-			return update;
+			if(update == 1){
+				return true;
+			}
+			else{
+				return false;
+			}
 			
 		}catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "
 					+ e.getMessage());
-			return -1;
+			return false;
 		}
 	}
 	
 	
     public boolean updateEmployeeDesignation(String newDesignation, String lastName, String firstName){
 		try{
-			prepStUpdateEmployeeLastName.setString(1, newDesignation);
-			prepStUpdateEmployeeLastName.setString(2, lastName);
-			prepStUpdateEmployeeLastName.setString(3, firstName);
+			prepStUpdateEmployeeDesignation.setString(1, newDesignation);
+			prepStUpdateEmployeeDesignation.setString(2, lastName);
+			prepStUpdateEmployeeDesignation.setString(3, firstName);
 			
-			boolean update = prepStUpdateEmployeeLastName.execute();
-			return update;
+			int update = prepStUpdateEmployeeDesignation.executeUpdate();
+			if(update == 1){
+				return true;
+			}
+			else{
+				return false;
+			}
 			
 		}catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "
@@ -386,8 +396,13 @@ public class Datasource {
 			prepStUpdateEmployeeExperience.setString(2, lastName);
 			prepStUpdateEmployeeExperience.setString(3, firstName);
 			
-			boolean update = prepStUpdateEmployeeLastName.execute();
-			return update;
+			int update = prepStUpdateEmployeeExperience.executeUpdate();
+			if(update == 1){
+				return true;
+			}
+			else{
+				return false;
+			}
 			
 		}catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "

@@ -55,10 +55,14 @@ public class Main {
 //		datasource.queryEmployeeSalary("Johnson", "Emma");
 
 		
-		boolean b = datasource.updateEmployeeLastName(newName, lastName, firstName)
+		boolean changeName = datasource.updateEmployeeLastName("Riss", "Johnson", "Emma");
+		boolean changeDesignation = datasource.updateEmployeeDesignation("Java Developer", "Riss", "Emma");
+		boolean changeExperience = datasource.updateEmployeeExperience(3, "Riss", "Emma");
 		
-		System.out.println("Update: " + b);
-		
+		System.out.println("Change name successful: " + changeName);
+		System.out.println("Change designation successful: " + changeDesignation);
+		System.out.println("Change experience successful: " + changeExperience);
+	
 		if(!datasource.open()) {
 			System.out.println("Can't open datasource");
 			return;
