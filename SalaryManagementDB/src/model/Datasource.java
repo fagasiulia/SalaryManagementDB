@@ -57,20 +57,28 @@ public class Datasource {
 	public static final int ORDER_BY_DESC = 3;
 
 	public static final String QUERY_EMPLOYEES = "SELECT * FROM "
-			+ EMPLOYEE_TABLE + " ORDER BY " + ET_LAST_NAME_COLUMN  
+			+ EMPLOYEE_TABLE + " ORDER BY " + ET_LAST_NAME_COLUMN
 			+ " COLLATE NOCASE =?";
 
 	public static final String QUERY_EMPLOYEE_BY_LAST_NAME = "SELECT * FROM "
 			+ EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN + " = ?";
 
+	public static final String QUERY_EMPLOYEE_BY_FULL_NAME = "SELECT * FROM "
+			+ EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN + " = ? AND "
+			+ ET_FIRST_NAME_COLUMN + "=?";
+
 	public static final String QUERY_EMPLOYEE_BY_ID = "SELECT * FROM "
 			+ EMPLOYEE_TABLE + " WHERE " + ET_ID_COLUMN + " = ?";
 
 	public static final String QUERY_EMPLOYEE_SALARY = "SELECT "
-			+ ST_CURRENT_SALARY_COLUMN + " FROM " + SALARY_TABLE + " INNER JOIN "
-			+ EMPLOYEE_TABLE + " ON " + EMPLOYEE_TABLE + "." + ET_ID_COLUMN
-			+ " = " + SALARY_TABLE + "." + ST_EMPLOYEE_ID_COLUMN + " WHERE "
-			+ ET_LAST_NAME_COLUMN + " = ? AND " + ET_FIRST_NAME_COLUMN + "=?";
+			+ ST_CURRENT_SALARY_COLUMN + " FROM " + SALARY_TABLE
+			+ " INNER JOIN " + EMPLOYEE_TABLE + " ON " + EMPLOYEE_TABLE + "."
+			+ ET_ID_COLUMN + " = " + SALARY_TABLE + "." + ST_EMPLOYEE_ID_COLUMN
+			+ " WHERE " + ET_LAST_NAME_COLUMN + " = ? AND "
+			+ ET_FIRST_NAME_COLUMN + "=?";
+	
+	public static final String QUERY_EMPLOYEE_SALARY_BASED_ON_ID = "SELECT * FROM " + SALARY_TABLE
+			+ " WHERE " + ST_EMPLOYEE_ID_COLUMN + " = ?";
 
 	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
 			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
@@ -93,10 +101,18 @@ public class Datasource {
 			+ ET_LAST_NAME_COLUMN + "=? AND " + EMPLOYEE_TABLE + "."
 			+ ET_FIRST_NAME_COLUMN + "=?";
 
+	public static final String QUERY_EMPLOYEE_ID = "SELECT " + ET_ID_COLUMN
+			+ " FROM " + EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN
+			+ "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+
 	public static final String INSERT_EMPLOYEE = "INSERT INTO "
 			+ EMPLOYEE_TABLE + " ( " + ET_FIRST_NAME_COLUMN + ", "
 			+ ET_LAST_NAME_COLUMN + ", " + ET_DESIGNATION_COULMN + ", "
 			+ ET_EXPERIENCE_COULMN + ") VALUES ( =?, =?, =?, =?)";
+
+	public static final String INSERT_SALARY = "INSERT INTO " + SALARY_TABLE
+			+ "( " + ST_EMPLOYEE_ID_COLUMN + ", " + ST_CURRENT_SALARY_COLUMN
+			+ ") VALUES (=?, =?)";
 
 	public static final String UPDATE_EMPLOYEE_LAST_NAME = "UPDATE "
 			+ EMPLOYEE_TABLE + " SET " + ET_LAST_NAME_COLUMN + "= ? WHERE "
@@ -107,7 +123,7 @@ public class Datasource {
 			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
 	public static final String UPDATE_EMPLOYEE_EXPERIENCE = "UPDATE "
-			+ EMPLOYEE_TABLE + " SET " + ET_EXPERIENCE_COULMN + "= ? WHERE "
+			+ EMPLOYEE_TABLE + " SET " + ET_EXPERIENCE_COULMN + "=? WHERE "
 			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
 	private Connection conn;
@@ -119,12 +135,16 @@ public class Datasource {
 	private PreparedStatement prepStUpdateEmployeeLastName;
 	private PreparedStatement prepStUpdateEmployeeDesignation;
 	private PreparedStatement prepStUpdateEmployeeExperience;
+	private PreparedStatement prepStinsertIntoEmployee;
+	private PreparedStatement prepStinsertIntoSalary;
+	private PreparedStatement prepStQueryEmployeeId;
+	private PreparedStatement prepStQueryEmployeeFullName;
+	private PreparedStatement prepStQuerySalaryBasedOnId;
 
 	public boolean open() {
 		try {
 			conn = DriverManager.getConnection(CONNECTION_STRING);
-			prepStQueryEmployees = conn
-					.prepareStatement(QUERY_EMPLOYEES);
+			prepStQueryEmployees = conn.prepareStatement(QUERY_EMPLOYEES);
 			prepStQueryEmployeeByLastName = conn
 					.prepareStatement(QUERY_EMPLOYEE_BY_LAST_NAME);
 			prepStQueryEmployeeById = conn
@@ -139,39 +159,68 @@ public class Datasource {
 					.prepareStatement(UPDATE_EMPLOYEE_DESIGNATION);
 			prepStUpdateEmployeeExperience = conn
 					.prepareStatement(UPDATE_EMPLOYEE_EXPERIENCE);
+			// Because I need the employee's id to insert data
+			// into Salary table, I passed another parameter to the
+			// PreparedStatement
+			prepStinsertIntoEmployee = conn.
+					prepareStatement(INSERT_EMPLOYEE,
+					Statement.RETURN_GENERATED_KEYS);
+			prepStinsertIntoSalary = conn.
+					prepareStatement(INSERT_SALARY);
+			prepStQueryEmployeeId = conn.
+					prepareStatement(QUERY_EMPLOYEE_ID);
+			prepStQueryEmployeeFullName = conn
+					.prepareStatement(QUERY_EMPLOYEE_BY_FULL_NAME);
+			prepStQuerySalaryBasedOnId = conn
+					.prepareStatement(QUERY_EMPLOYEE_SALARY_BASED_ON_ID);
 			return true;
 
 		} catch (SQLException e) {
-			System.out.println("Couldn't connect to database: "
-					+ e.getMessage());
+			System.out.println("Couldn't connect to database: ");
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	public void close() {
 		try {
-			if(prepStUpdateEmployeeExperience != null){
+			if (prepStQuerySalaryBasedOnId != null) {
+				prepStQuerySalaryBasedOnId.close();
+			}
+			if (prepStQueryEmployeeFullName != null) {
+				prepStQueryEmployeeFullName.close();
+			}
+			if (prepStQueryEmployeeId != null) {
+				prepStQueryEmployeeId.close();
+			}
+			if (prepStinsertIntoSalary != null) {
+				prepStinsertIntoSalary.close();
+			}
+			if (prepStinsertIntoEmployee != null) {
+				prepStinsertIntoEmployee.close();
+			}
+			if (prepStUpdateEmployeeExperience != null) {
 				prepStUpdateEmployeeExperience.close();
 			}
-			if(prepStUpdateEmployeeDesignation != null){
+			if (prepStUpdateEmployeeDesignation != null) {
 				prepStUpdateEmployeeDesignation.close();
 			}
-			if(prepStUpdateEmployeeLastName != null){
+			if (prepStUpdateEmployeeLastName != null) {
 				prepStUpdateEmployeeLastName.close();
 			}
-			if(prepStqueryEmployeeSalary != null){
+			if (prepStqueryEmployeeSalary != null) {
 				prepStqueryEmployeeSalary.close();
 			}
-			if(prepStQueryEmployeeAllInfo != null){
+			if (prepStQueryEmployeeAllInfo != null) {
 				prepStQueryEmployeeAllInfo.close();
 			}
-			if(prepStQueryEmployeeById != null){
+			if (prepStQueryEmployeeById != null) {
 				prepStQueryEmployeeById.close();
 			}
-			if(prepStQueryEmployeeByLastName != null){
+			if (prepStQueryEmployeeByLastName != null) {
 				prepStQueryEmployeeByLastName.close();
 			}
-			if(prepStQueryEmployees != null){
+			if (prepStQueryEmployees != null) {
 				prepStQueryEmployees.close();
 			}
 			if (conn != null) {
@@ -211,7 +260,7 @@ public class Datasource {
 			}
 			prepStQueryEmployees.setString(1, order);
 			ResultSet results = prepStQueryEmployees.executeQuery();
-			
+
 			List<Employee> employeeList = new ArrayList<>();
 
 			while (results.next()) {
@@ -294,16 +343,16 @@ public class Datasource {
 			return null;
 		}
 	}
-	
-	public void queryEmployeeAllInfo(String lastName, String firstName){
-		try{
+
+	public void queryEmployeeAllInfo(String lastName, String firstName) {
+		try {
 			prepStQueryEmployeeAllInfo.setString(1, lastName);
 			prepStQueryEmployeeAllInfo.setString(2, firstName);
 			ResultSet result = prepStQueryEmployeeAllInfo.executeQuery();
-			
+
 			StringBuilder sb = new StringBuilder();
-			
-			while(result.next()){
+
+			while (result.next()) {
 				sb.append(result.getInt(ET_ID_COLUMN));
 				sb.append(" ");
 				sb.append(result.getString(ET_FIRST_NAME_COLUMN));
@@ -318,25 +367,25 @@ public class Datasource {
 				sb.append("\nSALARY RANGE: ");
 				sb.append(result.getString(SRT_RANGE_COULMN));
 			}
-			
+
 			System.out.println("EMPLOYEE INFORMATION\n" + sb.toString());
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Unable to return employee's information: "
 					+ e.getMessage());
 		}
 	}
-	
+
 	public void queryEmployeeSalary(String lastName, String firstName) {
 		try {
 			prepStqueryEmployeeSalary.setString(1, lastName);
 			prepStqueryEmployeeSalary.setString(2, firstName);
 
 			ResultSet results = prepStqueryEmployeeSalary.executeQuery();
-			
 
-		    while (results.next()) {
-				System.out.println("Employee salary: " + results.getInt(ST_CURRENT_SALARY_COLUMN));
+			while (results.next()) {
+				System.out.println("Employee salary: "
+						+ results.getInt(ST_CURRENT_SALARY_COLUMN));
 			}
 
 		} catch (SQLException e) {
@@ -344,70 +393,141 @@ public class Datasource {
 					+ e.getMessage());
 		}
 	}
-	
-	
-	public boolean updateEmployeeLastName(String newName, String lastName, String firstName){
-		try{
+
+	public boolean updateEmployeeLastName(String newName, String lastName,
+			String firstName) {
+		try {
 			prepStUpdateEmployeeLastName.setString(1, newName);
 			prepStUpdateEmployeeLastName.setString(2, lastName);
 			prepStUpdateEmployeeLastName.setString(3, firstName);
-			
+
 			int update = prepStUpdateEmployeeLastName.executeUpdate();
-			if(update == 1){
+			if (update == 1) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "
 					+ e.getMessage());
 			return false;
 		}
 	}
-	
-	
-    public boolean updateEmployeeDesignation(String newDesignation, String lastName, String firstName){
-		try{
+
+	public boolean updateEmployeeDesignation(String newDesignation,
+			String lastName, String firstName) {
+		try {
 			prepStUpdateEmployeeDesignation.setString(1, newDesignation);
 			prepStUpdateEmployeeDesignation.setString(2, lastName);
 			prepStUpdateEmployeeDesignation.setString(3, firstName);
-			
+
 			int update = prepStUpdateEmployeeDesignation.executeUpdate();
-			if(update == 1){
+			if (update == 1) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "
 					+ e.getMessage());
 			return false;
 		}
 	}
-	
-	
-	public boolean updateEmployeeExperience(int experience, String lastName, String firstName){
-		try{
+
+	public boolean updateEmployeeExperience(int experience, String lastName,
+			String firstName) {
+		try {
 			prepStUpdateEmployeeExperience.setInt(1, experience);
 			prepStUpdateEmployeeExperience.setString(2, lastName);
 			prepStUpdateEmployeeExperience.setString(3, firstName);
-			
+
 			int update = prepStUpdateEmployeeExperience.executeUpdate();
-			if(update == 1){
+			if (update == 1) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Unable to update employee's last name: "
 					+ e.getMessage());
 			return false;
 		}
 	}
+
+	private int insertEmployee(String lastName, String firstName, String designation, int experience) throws SQLException {
+
+		// Check if the employee is already in the list
+		prepStQueryEmployeeFullName.setString(1, lastName);
+		prepStQueryEmployeeFullName.setString(2, firstName);
+		ResultSet results = prepStQueryEmployeeFullName.executeQuery();
+
+		if (results.next()) {
+			// If it is we return the employee id
+			return results.getInt(1);
+		}
+		// If not, we insert it
+		else {
+			prepStinsertIntoEmployee.setString(1, lastName);
+			prepStinsertIntoEmployee.setString(2, firstName);
+			prepStinsertIntoEmployee.setString(3, designation);
+			prepStinsertIntoEmployee.setInt(4, experience);
+
+			int affectedRows = prepStinsertIntoEmployee.executeUpdate();
+			if (affectedRows != 1) {
+				throw new SQLException("Couln't insert employee!");
+			}
+			ResultSet generatedKeys = prepStinsertIntoEmployee.getGeneratedKeys();
+			if (generatedKeys.next()) {
+				// this will return employee's id
+				return generatedKeys.getInt(1);
+			} else {
+				throw new SQLException("Couldn't get Employee's id");
+			}
+		}
+	}
+	
+	public void insertNewEmployee(String lastName, String firstName, String designation, int experience, int salary){
+		try{
+			conn.setAutoCommit(false);
+			int employeeId = insertEmployee(lastName, firstName, designation, experience);
+			
+			prepStQuerySalaryBasedOnId.setInt(1, employeeId);
+			ResultSet result = prepStQuerySalaryBasedOnId.executeQuery();
+			
+			if(result.next()){
+				System.out.println("The employee id already exists in the salary table!");
+			}
+			else{
+				prepStinsertIntoSalary.setInt(1, employeeId);
+				prepStinsertIntoSalary.setInt(2, salary);
+				
+				int affectedRows = prepStinsertIntoSalary.executeUpdate();
+				if(affectedRows == 1){
+					conn.commit();
+				}
+				else{
+					throw new SQLException("The salary insert failed");
+				}
+			}
+		}catch(Exception e){
+			System.out.println("Insert salary exception: " + e.getMessage());
+			try{
+				System.out.println("Performing a rollback");
+				conn.rollback();
+			}catch(SQLException e2){
+				System.out.println("Performing a rollback execption: " + e2.getMessage());
+			}
+		}finally{
+			try{
+				System.out.println("Resetting default commit behaviour");
+				conn.setAutoCommit(true);
+			}catch(SQLException e){
+				System.out.println("Resetting default commit behaviour execption: " + e.getMessage());
+			}
+		}
+	}
+	
 }
