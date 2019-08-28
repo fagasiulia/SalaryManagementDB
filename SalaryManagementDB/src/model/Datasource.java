@@ -57,29 +57,21 @@ public class Datasource {
 	public static final int ORDER_BY_DESC = 3;
 
 	public static final String QUERY_EMPLOYEES = "SELECT * FROM "
-			+ EMPLOYEE_TABLE;
+			+ EMPLOYEE_TABLE + " ORDER BY " + ET_LAST_NAME_COLUMN  
+			+ " COLLATE NOCASE =?";
 
 	public static final String QUERY_EMPLOYEE_BY_LAST_NAME = "SELECT * FROM "
-			+ EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN + "= ?";
+			+ EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN + " = ?";
 
 	public static final String QUERY_EMPLOYEE_BY_ID = "SELECT * FROM "
-			+ EMPLOYEE_TABLE + " WHERE " + ET_ID_COLUMN + "= ?";
+			+ EMPLOYEE_TABLE + " WHERE " + ET_ID_COLUMN + " = ?";
 
 	public static final String QUERY_EMPLOYEE_SALARY = "SELECT "
-			+ ST_CURRENT_SALARY_COLUMN + " FROM " + SALARY_TABLE + " WHERE "
-			+ ST_EMPLOYEE_ID_COLUMN + " = ?";
+			+ ST_CURRENT_SALARY_COLUMN + " FROM " + SALARY_TABLE + " INNER JOIN "
+			+ EMPLOYEE_TABLE + " ON " + EMPLOYEE_TABLE + "." + ET_ID_COLUMN
+			+ " = " + SALARY_TABLE + "." + ST_EMPLOYEE_ID_COLUMN + " WHERE "
+			+ ET_LAST_NAME_COLUMN + " = ? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
-	/*
-	 * SELECT Employee.Id, Employee.First_Name, Employee.Last_Name,
-	 * Employee.Designation, Employee.Experience, Salary.Current_Salary,
-	 * Salary_Range.Range FROM Employee INNER JOIN Salary ON Salary.Employee_Id
-	 * = Employee.Id INNER JOIN Designation_Group ON
-	 * Designation_Group.Designation = Employee.Designation INNER JOIN
-	 * Salary_Range ON Salary_Range.Salary_Group =
-	 * Designation_Group.Salary_Group AND Salary_Range.Experience =
-	 * Employee.Experience WHERE Employee.Last_Name = "Johnson" AND Employee.
-	 * First_Name = 'Emma';
-	 */
 	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
 			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
 			+ ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
@@ -90,9 +82,9 @@ public class Datasource {
 			+ SRT_RANGE_COULMN + " FROM " + EMPLOYEE_TABLE + " INNER JOIN "
 			+ SALARY_TABLE + " ON " + SALARY_TABLE + "."
 			+ ST_EMPLOYEE_ID_COLUMN + " = " + EMPLOYEE_TABLE + "."
-			+ ET_ID_COLUMN + "INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON "
+			+ ET_ID_COLUMN + " INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON "
 			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = "
-			+ EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + "INNER JOIN "
+			+ EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + " INNER JOIN "
 			+ SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "."
 			+ SRT_SALARY_GROUP_COLUMN + " = " + DESIGNATION_GROUP_TABLE + "."
 			+ DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
@@ -108,7 +100,7 @@ public class Datasource {
 
 	public static final String UPDATE_EMPLOYEE_LAST_NAME = "UPDATE "
 			+ EMPLOYEE_TABLE + " SET " + ET_LAST_NAME_COLUMN + "= ? WHERE "
-			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
+			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + " = ?";
 
 	public static final String UPDATE_EMPLOYEE_DESIGNATION = "UPDATE "
 			+ EMPLOYEE_TABLE + " SET " + ET_DESIGNATION_COULMN + "= ? WHERE "
@@ -119,13 +111,34 @@ public class Datasource {
 			+ ET_LAST_NAME_COLUMN + "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
 	private Connection conn;
+	private PreparedStatement prepStQueryEmployees;
 	private PreparedStatement prepStQueryEmployeeByLastName;
+	private PreparedStatement prepStQueryEmployeeById;
+	private PreparedStatement prepStQueryEmployeeAllInfo;
+	private PreparedStatement prepStqueryEmployeeSalary;
+	private PreparedStatement prepStUpdateEmployeeLastName;
+	private PreparedStatement prepStUpdateEmployeeDesignation;
+	private PreparedStatement prepStUpdateEmployeeExperience;
 
 	public boolean open() {
 		try {
 			conn = DriverManager.getConnection(CONNECTION_STRING);
+			prepStQueryEmployees = conn
+					.prepareStatement(QUERY_EMPLOYEES);
 			prepStQueryEmployeeByLastName = conn
 					.prepareStatement(QUERY_EMPLOYEE_BY_LAST_NAME);
+			prepStQueryEmployeeById = conn
+					.prepareStatement(QUERY_EMPLOYEE_BY_ID);
+			prepStQueryEmployeeAllInfo = conn
+					.prepareStatement(QUERY_EMPLOYEE_ALL_INFORMATION);
+			prepStqueryEmployeeSalary = conn
+					.prepareStatement(QUERY_EMPLOYEE_SALARY);
+			prepStUpdateEmployeeLastName = conn
+					.prepareStatement(UPDATE_EMPLOYEE_LAST_NAME);
+			prepStUpdateEmployeeDesignation = conn
+					.prepareStatement(UPDATE_EMPLOYEE_DESIGNATION);
+			prepStUpdateEmployeeExperience = conn
+					.prepareStatement(UPDATE_EMPLOYEE_EXPERIENCE);
 			return true;
 
 		} catch (SQLException e) {
@@ -137,8 +150,29 @@ public class Datasource {
 
 	public void close() {
 		try {
+			if(prepStUpdateEmployeeExperience != null){
+				prepStUpdateEmployeeExperience.close();
+			}
+			if(prepStUpdateEmployeeDesignation != null){
+				prepStUpdateEmployeeDesignation.close();
+			}
+			if(prepStUpdateEmployeeLastName != null){
+				prepStUpdateEmployeeLastName.close();
+			}
+			if(prepStqueryEmployeeSalary != null){
+				prepStqueryEmployeeSalary.close();
+			}
+			if(prepStQueryEmployeeAllInfo != null){
+				prepStQueryEmployeeAllInfo.close();
+			}
+			if(prepStQueryEmployeeById != null){
+				prepStQueryEmployeeById.close();
+			}
 			if(prepStQueryEmployeeByLastName != null){
 				prepStQueryEmployeeByLastName.close();
+			}
+			if(prepStQueryEmployees != null){
+				prepStQueryEmployees.close();
 			}
 			if (conn != null) {
 				conn.close();
@@ -149,24 +183,35 @@ public class Datasource {
 		}
 	}
 
+	// Instead of .schema for Employee's table
+	public void queryEmployeeMetaData() {
+		try (Statement statement = conn.createStatement();
+				ResultSet result = statement.executeQuery(QUERY_EMPLOYEES)) {
+
+			ResultSetMetaData meta = result.getMetaData();
+			int numColumns = meta.getColumnCount();
+			for (int i = 1; i <= numColumns; i++) {
+				System.out.format("Column %d in Employee table is named %s\n",
+						i, meta.getColumnName(i));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Query failed: " + e.getMessage());
+		}
+	}
+
 	public List<Employee> queryEmployees(int sortOrder) {
 
-		StringBuilder sb = new StringBuilder(QUERY_EMPLOYEES);
-
-		if (sortOrder != ORDER_BY_NONE) {
-			sb.append(" ORDER BY ");
-			sb.append(ET_LAST_NAME_COLUMN);
-			sb.append(" COLLATE NOCASE ");
+		try {
+			String order;
 			if (sortOrder == ORDER_BY_DESC) {
-				sb.append("DESC");
+				order = "DESC";
 			} else {
-				sb.append("ASC");
+				order = "ASC";
 			}
-		}
-
-		try (Statement statement = conn.createStatement();
-				ResultSet results = statement.executeQuery(sb.toString())) {
-
+			prepStQueryEmployees.setString(1, order);
+			ResultSet results = prepStQueryEmployees.executeQuery();
+			
 			List<Employee> employeeList = new ArrayList<>();
 
 			while (results.next()) {
@@ -187,7 +232,6 @@ public class Datasource {
 		} catch (SQLException e) {
 			System.out.println("Unable to query employees" + e.getMessage());
 			return null;
-
 		}
 	}
 
@@ -221,19 +265,134 @@ public class Datasource {
 		}
 	}
 
-	public void queryEmployeeMetaData() {
-		try (Statement statement = conn.createStatement();
-				ResultSet result = statement.executeQuery(QUERY_EMPLOYEES)) {
+	public List<Employee> getEmployeeById(int id) {
+		try {
+			prepStQueryEmployeeById.setInt(1, id);
 
-			ResultSetMetaData meta = result.getMetaData();
-			int numColumns = meta.getColumnCount();
-			for (int i = 1; i <= numColumns; i++) {
-				System.out.format("Column %d in Employee table is named %s\n",
-						i, meta.getColumnName(i));
+			ResultSet results = prepStQueryEmployeeById.executeQuery();
+			List<Employee> employeeList = new ArrayList<>();
+
+			while (results.next()) {
+				Employee newEmployee = new Employee();
+				newEmployee.setId(results.getInt(ET_INDEX_ID_COLUMN));
+				newEmployee.setFirstName(results
+						.getString(ET_INDEX_FIRST_NAME_COLUMN));
+				newEmployee.setLastName(results
+						.getString(ET_INDEX_LAST_NAME_COLUMN));
+				newEmployee.setDesignation(results
+						.getString(ET_INDEX_DESIGNATION_COLUMN));
+				newEmployee.setExperience(results
+						.getInt(ET_INDEX_EXPERIENCE_COLUMN));
+
+				employeeList.add(newEmployee);
+			}
+			return employeeList;
+
+		} catch (SQLException e) {
+			System.out.println("Unable to search employee by last name: "
+					+ e.getMessage());
+			return null;
+		}
+	}
+	
+	public void queryEmployeeAllInfo(String lastName, String firstName){
+		try{
+			prepStQueryEmployeeAllInfo.setString(1, lastName);
+			prepStQueryEmployeeAllInfo.setString(2, firstName);
+			ResultSet result = prepStQueryEmployeeAllInfo.executeQuery();
+			
+			StringBuilder sb = new StringBuilder();
+			
+			while(result.next()){
+				sb.append(result.getInt(ET_ID_COLUMN));
+				sb.append(" ");
+				sb.append(result.getString(ET_FIRST_NAME_COLUMN));
+				sb.append(" ");
+				sb.append(result.getString(ET_LAST_NAME_COLUMN));
+				sb.append("\nDESIGNATION: ");
+				sb.append(result.getString(ET_DESIGNATION_COULMN));
+				sb.append("\nEXPERIENCE: ");
+				sb.append(result.getString(ET_EXPERIENCE_COULMN));
+				sb.append("\nCURRENT SALARY: ");
+				sb.append(result.getInt(ST_CURRENT_SALARY_COLUMN));
+				sb.append("\nSALARY RANGE: ");
+				sb.append(result.getString(SRT_RANGE_COULMN));
+			}
+			
+			System.out.println("EMPLOYEE INFORMATION\n" + sb.toString());
+			
+		}catch (SQLException e) {
+			System.out.println("Unable to return employee's information: "
+					+ e.getMessage());
+		}
+	}
+	
+	public void queryEmployeeSalary(String lastName, String firstName) {
+		try {
+			prepStqueryEmployeeSalary.setString(1, lastName);
+			prepStqueryEmployeeSalary.setString(2, firstName);
+
+			ResultSet results = prepStqueryEmployeeSalary.executeQuery();
+			
+
+		    while (results.next()) {
+				System.out.println("Employee salary: " + results.getInt(ST_CURRENT_SALARY_COLUMN));
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Query failed: " + e.getMessage());
+			System.out.println("Unable to search employee's salary: "
+					+ e.getMessage());
+		}
+	}
+	
+	
+	public int updateEmployeeLastName(String newName, String lastName, String firstName){
+		try{
+			prepStUpdateEmployeeLastName.setString(1, newName);
+			prepStUpdateEmployeeLastName.setString(2, lastName);
+			prepStUpdateEmployeeLastName.setString(3, firstName);
+			
+			int update = prepStUpdateEmployeeLastName.executeUpdate();
+			return update;
+			
+		}catch (SQLException e) {
+			System.out.println("Unable to update employee's last name: "
+					+ e.getMessage());
+			return -1;
+		}
+	}
+	
+	
+    public boolean updateEmployeeDesignation(String newDesignation, String lastName, String firstName){
+		try{
+			prepStUpdateEmployeeLastName.setString(1, newDesignation);
+			prepStUpdateEmployeeLastName.setString(2, lastName);
+			prepStUpdateEmployeeLastName.setString(3, firstName);
+			
+			boolean update = prepStUpdateEmployeeLastName.execute();
+			return update;
+			
+		}catch (SQLException e) {
+			System.out.println("Unable to update employee's last name: "
+					+ e.getMessage());
+			return false;
+		}
+	}
+	
+	
+	public boolean updateEmployeeExperience(int experience, String lastName, String firstName){
+		try{
+			prepStUpdateEmployeeExperience.setInt(1, experience);
+			prepStUpdateEmployeeExperience.setString(2, lastName);
+			prepStUpdateEmployeeExperience.setString(3, firstName);
+			
+			boolean update = prepStUpdateEmployeeLastName.execute();
+			return update;
+			
+		}catch (SQLException e) {
+			System.out.println("Unable to update employee's last name: "
+					+ e.getMessage());
+			return false;
 		}
 	}
 }
