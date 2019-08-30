@@ -80,6 +80,26 @@ public class Datasource {
 	public static final String QUERY_EMPLOYEE_SALARY_BASED_ON_ID = "SELECT * FROM " + SALARY_TABLE
 			+ " WHERE " + ST_EMPLOYEE_ID_COLUMN + " = ?";
 
+//	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
+//			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
+//			+ ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
+//			+ ET_LAST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
+//			+ ET_DESIGNATION_COULMN + ", " + EMPLOYEE_TABLE + "."
+//			+ ET_EXPERIENCE_COULMN + ", " + SALARY_TABLE + "."
+//			+ ST_CURRENT_SALARY_COLUMN + ", " + SALARY_RANGE_TABLE + "."
+//			+ SRT_RANGE_COULMN + " FROM " + EMPLOYEE_TABLE + " INNER JOIN "
+//			+ SALARY_TABLE + " ON " + SALARY_TABLE + "."
+//			+ ST_EMPLOYEE_ID_COLUMN + " = " + EMPLOYEE_TABLE + "."
+//			+ ET_ID_COLUMN + " INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON "
+//			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = "
+//			+ EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + " INNER JOIN "
+//			+ SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "."
+//			+ SRT_SALARY_GROUP_COLUMN + " = " + DESIGNATION_GROUP_TABLE + "."
+//			+ DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
+//			+ SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "."
+//			+ ET_EXPERIENCE_COULMN + " WHERE " + EMPLOYEE_TABLE + "."
+//			+ ET_LAST_NAME_COLUMN + "=? AND " + EMPLOYEE_TABLE + "."
+//			+ ET_FIRST_NAME_COLUMN + "=?";
 	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
 			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
 			+ ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
@@ -98,8 +118,7 @@ public class Datasource {
 			+ DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
 			+ SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "."
 			+ ET_EXPERIENCE_COULMN + " WHERE " + EMPLOYEE_TABLE + "."
-			+ ET_LAST_NAME_COLUMN + "=? AND " + EMPLOYEE_TABLE + "."
-			+ ET_FIRST_NAME_COLUMN + "=?";
+			+ ET_LAST_NAME_COLUMN + "=\"";
 
 	public static final String QUERY_EMPLOYEE_ID = "SELECT " + ET_ID_COLUMN
 			+ " FROM " + EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN
@@ -108,11 +127,11 @@ public class Datasource {
 	public static final String INSERT_EMPLOYEE = "INSERT INTO "
 			+ EMPLOYEE_TABLE + " ( " + ET_FIRST_NAME_COLUMN + ", "
 			+ ET_LAST_NAME_COLUMN + ", " + ET_DESIGNATION_COULMN + ", "
-			+ ET_EXPERIENCE_COULMN + ") VALUES ( =?, =?, =?, =?)";
+			+ ET_EXPERIENCE_COULMN + ") VALUES ( ?, ?, ?, ?)";
 
 	public static final String INSERT_SALARY = "INSERT INTO " + SALARY_TABLE
 			+ "( " + ST_EMPLOYEE_ID_COLUMN + ", " + ST_CURRENT_SALARY_COLUMN
-			+ ") VALUES (=?, =?)";
+			+ ") VALUES (?, ?)";
 
 	public static final String UPDATE_EMPLOYEE_LAST_NAME = "UPDATE "
 			+ EMPLOYEE_TABLE + " SET " + ET_LAST_NAME_COLUMN + "= ? WHERE "
@@ -149,8 +168,8 @@ public class Datasource {
 					.prepareStatement(QUERY_EMPLOYEE_BY_LAST_NAME);
 			prepStQueryEmployeeById = conn
 					.prepareStatement(QUERY_EMPLOYEE_BY_ID);
-			prepStQueryEmployeeAllInfo = conn
-					.prepareStatement(QUERY_EMPLOYEE_ALL_INFORMATION);
+//			prepStQueryEmployeeAllInfo = conn
+//					.prepareStatement(QUERY_EMPLOYEE_ALL_INFORMATION);
 			prepStqueryEmployeeSalary = conn
 					.prepareStatement(QUERY_EMPLOYEE_SALARY);
 			prepStUpdateEmployeeLastName = conn
@@ -344,35 +363,47 @@ public class Datasource {
 		}
 	}
 
-	public void queryEmployeeAllInfo(String lastName, String firstName) {
+	public EmployeeInfo queryEmployeeAllInfo(String lastName, String firstName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT \r\n" + 
+				"Employee.Id, \r\n" + 
+				"Employee.First_Name, \r\n" + 
+				"Employee.Last_Name, \r\n" + 
+				"Employee.Designation, \r\n" + 
+				"Employee.Experience, \r\n" + 
+				"Salary.Current_Salary, \r\n" + 
+				"Salary_Range.Range \r\n" + 
+				"FROM Employee \r\n" + 
+				"INNER JOIN Salary ON \r\n" + 
+				"Salary.Employee_Id = Employee.Id \r\n" + 
+				"INNER JOIN Designation_Group ON Designation_Group.Designation = Employee.Designation\r\n" + 
+				"INNER JOIN Salary_Range ON Salary_Range.Salary_Group = Designation_Group.Salary_Group  \r\n" + 
+				"AND Salary_Range.Experience = Employee.Experience\r\n" + 
+				"WHERE Employee.Last_Name = \"Johnson\" AND Employee. First_Name = \"Emma\"");
 		try {
-			prepStQueryEmployeeAllInfo.setString(1, lastName);
-			prepStQueryEmployeeAllInfo.setString(2, firstName);
-			ResultSet result = prepStQueryEmployeeAllInfo.executeQuery();
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sb.toString());
+//			prepStQueryEmployeeAllInfo.setString(1, lastName);
+//			prepStQueryEmployeeAllInfo.setString(2, firstName);
+//			ResultSet result = prepStQueryEmployeeAllInfo.executeQuery();
 
-			StringBuilder sb = new StringBuilder();
-
+			EmployeeInfo employee = new EmployeeInfo();
 			while (result.next()) {
-				sb.append(result.getInt(ET_ID_COLUMN));
-				sb.append(" ");
-				sb.append(result.getString(ET_FIRST_NAME_COLUMN));
-				sb.append(" ");
-				sb.append(result.getString(ET_LAST_NAME_COLUMN));
-				sb.append("\nDESIGNATION: ");
-				sb.append(result.getString(ET_DESIGNATION_COULMN));
-				sb.append("\nEXPERIENCE: ");
-				sb.append(result.getString(ET_EXPERIENCE_COULMN));
-				sb.append("\nCURRENT SALARY: ");
-				sb.append(result.getInt(ST_CURRENT_SALARY_COLUMN));
-				sb.append("\nSALARY RANGE: ");
-				sb.append(result.getString(SRT_RANGE_COULMN));
+				employee.setId(result.getInt(ET_ID_COLUMN));
+				employee.setFirstName(result.getString(ET_FIRST_NAME_COLUMN));
+				employee.setLastName(result.getString(ET_LAST_NAME_COLUMN));
+				employee.setDesignation(result.getString(ET_DESIGNATION_COULMN));
+				employee.setExperience(result.getInt(ET_EXPERIENCE_COULMN));
+				employee.setSalary(result.getInt(ST_CURRENT_SALARY_COLUMN));
+				employee.setSalaryRange(result.getString(SRT_RANGE_COULMN));
 			}
+			return employee;
 
-			System.out.println("EMPLOYEE INFORMATION\n" + sb.toString());
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("Unable to return employee's information: "
 					+ e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 	}
 

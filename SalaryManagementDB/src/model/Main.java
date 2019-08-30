@@ -78,7 +78,9 @@ public class Main {
 //			}
 //		}
 		
-		datasource.queryEmployeeAllInfo("Batten", "Andrew");
+		EmployeeInfo employeeInfo = new EmployeeInfo();
+		employeeInfo = datasource.queryEmployeeAllInfo("Emma", "Johnson");
+		System.out.println(employeeInfo.toString());
 //		datasource.insertNewEmployee("Hasworth", "Liana", "Project Manager", 3, 3800);
 		datasource.close();
 	}
