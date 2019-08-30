@@ -4,10 +4,7 @@ public class Designation_Group {
 	private String designation;
 	private int salaryGroup;
 	
-	public Designation_Group(String designation, int salaryGroup) {
-		this.designation = designation;
-		this.salaryGroup = salaryGroup;
-	}
+	public Designation_Group() {}
 
 	public String getDesignation() {
 		return designation;
@@ -23,6 +20,11 @@ public class Designation_Group {
 
 	public void setSalaryGroup(int salaryGroup) {
 		this.salaryGroup = salaryGroup;
+	}
+
+	@Override
+	public String toString() {
+		return "Designation_Group [designation=" + designation + ", salaryGroup=" + salaryGroup + "]";
 	}
 	
 	

@@ -79,47 +79,45 @@ public class Datasource {
 	
 	public static final String QUERY_EMPLOYEE_SALARY_BASED_ON_ID = "SELECT * FROM " + SALARY_TABLE
 			+ " WHERE " + ST_EMPLOYEE_ID_COLUMN + " = ?";
+	
+	public static final String QUERY_DESIGNATION_GROUP = "SELECT * FROM " + DESIGNATION_GROUP_TABLE 
+			+ " WHERE " + DGT_DESIGNATION_COULMN + " = ?";
+	
+	public static final String QUERY_SALARY_RANGE = "SELECT * FROM " + SALARY_RANGE_TABLE 
+			+ " WHERE " + SRT_SALARY_GROUP_COLUMN + " = ? AND " + SRT_EXPERIENCE_COULMN
+			+ "=?";
 
-//	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
-//			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
-//			+ ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
-//			+ ET_LAST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
-//			+ ET_DESIGNATION_COULMN + ", " + EMPLOYEE_TABLE + "."
-//			+ ET_EXPERIENCE_COULMN + ", " + SALARY_TABLE + "."
-//			+ ST_CURRENT_SALARY_COLUMN + ", " + SALARY_RANGE_TABLE + "."
-//			+ SRT_RANGE_COULMN + " FROM " + EMPLOYEE_TABLE + " INNER JOIN "
-//			+ SALARY_TABLE + " ON " + SALARY_TABLE + "."
-//			+ ST_EMPLOYEE_ID_COLUMN + " = " + EMPLOYEE_TABLE + "."
-//			+ ET_ID_COLUMN + " INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON "
-//			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = "
-//			+ EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + " INNER JOIN "
-//			+ SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "."
-//			+ SRT_SALARY_GROUP_COLUMN + " = " + DESIGNATION_GROUP_TABLE + "."
-//			+ DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
-//			+ SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "."
-//			+ ET_EXPERIENCE_COULMN + " WHERE " + EMPLOYEE_TABLE + "."
-//			+ ET_LAST_NAME_COLUMN + "=? AND " + EMPLOYEE_TABLE + "."
-//			+ ET_FIRST_NAME_COLUMN + "=?";
-	public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT "
-			+ EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "."
-			+ ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
-			+ ET_LAST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "."
-			+ ET_DESIGNATION_COULMN + ", " + EMPLOYEE_TABLE + "."
-			+ ET_EXPERIENCE_COULMN + ", " + SALARY_TABLE + "."
-			+ ST_CURRENT_SALARY_COLUMN + ", " + SALARY_RANGE_TABLE + "."
-			+ SRT_RANGE_COULMN + " FROM " + EMPLOYEE_TABLE + " INNER JOIN "
-			+ SALARY_TABLE + " ON " + SALARY_TABLE + "."
-			+ ST_EMPLOYEE_ID_COLUMN + " = " + EMPLOYEE_TABLE + "."
-			+ ET_ID_COLUMN + " INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON "
-			+ DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = "
-			+ EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + " INNER JOIN "
-			+ SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "."
-			+ SRT_SALARY_GROUP_COLUMN + " = " + DESIGNATION_GROUP_TABLE + "."
-			+ DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "."
-			+ SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "."
-			+ ET_EXPERIENCE_COULMN + " WHERE " + EMPLOYEE_TABLE + "."
-			+ ET_LAST_NAME_COLUMN + "=\"";
-
+	/*
+	 * SELECT Employee.Id, Employee.First_Name, Employee.Last_Name,
+	 * Employee.Designation, Employee.Experience, Salary.Current_Salary,
+	 * Salary_Range.Range FROM Employee INNER JOIN Salary ON Salary.Employee_Id =
+	 * Employee.Id INNER JOIN Designation_Group ON Designation_Group.Designation =
+	 * Employee.Designation INNER JOIN Salary_Range ON Salary_Range.Salary_Group =
+	 * Designation_Group.Salary_Group AND Salary_Range.Experience =
+	 * Employee.Experience WHERE Employee.Last_Name = "Johnson" AND Employee.
+	 * First_Name = "Emma";
+	 */
+	
+	/*
+	 * public static final String QUERY_EMPLOYEE_ALL_INFORMATION = "SELECT " +
+	 * EMPLOYEE_TABLE + "." + ET_ID_COLUMN + ", " + EMPLOYEE_TABLE + "." +
+	 * ET_FIRST_NAME_COLUMN + ", " + EMPLOYEE_TABLE + "." + ET_LAST_NAME_COLUMN +
+	 * ", " + EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + ", " + EMPLOYEE_TABLE +
+	 * "." + ET_EXPERIENCE_COULMN + ", " + SALARY_TABLE + "." +
+	 * ST_CURRENT_SALARY_COLUMN + ", " + SALARY_RANGE_TABLE + "." + SRT_RANGE_COULMN
+	 * + " FROM " + EMPLOYEE_TABLE + " INNER JOIN " + SALARY_TABLE + " ON " +
+	 * SALARY_TABLE + "." + ST_EMPLOYEE_ID_COLUMN + " = " + EMPLOYEE_TABLE + "." +
+	 * ET_ID_COLUMN + " INNER JOIN " + DESIGNATION_GROUP_TABLE + " ON " +
+	 * DESIGNATION_GROUP_TABLE + "." + DGT_DESIGNATION_COULMN + " = " +
+	 * EMPLOYEE_TABLE + "." + ET_DESIGNATION_COULMN + " INNER JOIN " +
+	 * SALARY_RANGE_TABLE + " ON " + SALARY_RANGE_TABLE + "." +
+	 * SRT_SALARY_GROUP_COLUMN + " = " + DESIGNATION_GROUP_TABLE + "." +
+	 * DGT_DESIGNATION_COULMN + " AND " + SALARY_RANGE_TABLE + "." +
+	 * SRT_EXPERIENCE_COULMN + " = " + EMPLOYEE_TABLE + "." + ET_EXPERIENCE_COULMN +
+	 * " WHERE " + EMPLOYEE_TABLE + "." + ET_LAST_NAME_COLUMN + "=? AND " +
+	 * EMPLOYEE_TABLE + "." + ET_FIRST_NAME_COLUMN + "=?";
+	 */
+	
 	public static final String QUERY_EMPLOYEE_ID = "SELECT " + ET_ID_COLUMN
 			+ " FROM " + EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN
 			+ "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
@@ -159,6 +157,8 @@ public class Datasource {
 	private PreparedStatement prepStQueryEmployeeId;
 	private PreparedStatement prepStQueryEmployeeFullName;
 	private PreparedStatement prepStQuerySalaryBasedOnId;
+	private PreparedStatement prepStQueryDesignationGroup;
+	private PreparedStatement prepStQuerySalaryRange;
 
 	public boolean open() {
 		try {
@@ -192,6 +192,11 @@ public class Datasource {
 					.prepareStatement(QUERY_EMPLOYEE_BY_FULL_NAME);
 			prepStQuerySalaryBasedOnId = conn
 					.prepareStatement(QUERY_EMPLOYEE_SALARY_BASED_ON_ID);
+			prepStQueryDesignationGroup = conn
+					.prepareStatement(QUERY_DESIGNATION_GROUP);
+			prepStQuerySalaryRange = conn
+					.prepareStatement(QUERY_SALARY_RANGE);
+			
 			return true;
 
 		} catch (SQLException e) {
@@ -203,6 +208,12 @@ public class Datasource {
 
 	public void close() {
 		try {
+			if (prepStQuerySalaryRange != null) {
+				prepStQuerySalaryRange.close();
+			}
+			if (prepStQueryDesignationGroup != null) {
+				prepStQueryDesignationGroup.close();
+			}
 			if (prepStQuerySalaryBasedOnId != null) {
 				prepStQuerySalaryBasedOnId.close();
 			}
@@ -363,46 +374,23 @@ public class Datasource {
 		}
 	}
 
-	public EmployeeInfo queryEmployeeAllInfo(String lastName, String firstName) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT \r\n" + 
-				"Employee.Id, \r\n" + 
-				"Employee.First_Name, \r\n" + 
-				"Employee.Last_Name, \r\n" + 
-				"Employee.Designation, \r\n" + 
-				"Employee.Experience, \r\n" + 
-				"Salary.Current_Salary, \r\n" + 
-				"Salary_Range.Range \r\n" + 
-				"FROM Employee \r\n" + 
-				"INNER JOIN Salary ON \r\n" + 
-				"Salary.Employee_Id = Employee.Id \r\n" + 
-				"INNER JOIN Designation_Group ON Designation_Group.Designation = Employee.Designation\r\n" + 
-				"INNER JOIN Salary_Range ON Salary_Range.Salary_Group = Designation_Group.Salary_Group  \r\n" + 
-				"AND Salary_Range.Experience = Employee.Experience\r\n" + 
-				"WHERE Employee.Last_Name = \"Johnson\" AND Employee. First_Name = \"Emma\"");
+	public Employee queryEmployeeByFullName(String lastName, String firstName) {
 		try {
-			Statement statement = conn.createStatement();
-			ResultSet result = statement.executeQuery(sb.toString());
-//			prepStQueryEmployeeAllInfo.setString(1, lastName);
-//			prepStQueryEmployeeAllInfo.setString(2, firstName);
-//			ResultSet result = prepStQueryEmployeeAllInfo.executeQuery();
-
-			EmployeeInfo employee = new EmployeeInfo();
-			while (result.next()) {
+			Employee employee = new Employee();
+			prepStQueryEmployeeFullName.setString(1, lastName);
+			prepStQueryEmployeeFullName.setString(2, firstName);
+			ResultSet result = prepStQueryEmployeeFullName.executeQuery();
+			
+			while(result.next()) {
 				employee.setId(result.getInt(ET_ID_COLUMN));
 				employee.setFirstName(result.getString(ET_FIRST_NAME_COLUMN));
 				employee.setLastName(result.getString(ET_LAST_NAME_COLUMN));
 				employee.setDesignation(result.getString(ET_DESIGNATION_COULMN));
 				employee.setExperience(result.getInt(ET_EXPERIENCE_COULMN));
-				employee.setSalary(result.getInt(ST_CURRENT_SALARY_COLUMN));
-				employee.setSalaryRange(result.getString(SRT_RANGE_COULMN));
 			}
 			return employee;
-
-		} catch (Exception e) {
-			System.out.println("Unable to return employee's information: "
-					+ e.getMessage());
-			e.printStackTrace();
+		}catch(Exception e) {
+			System.out.println("Unable to query employee by full name: " + e.getMessage());
 			return null;
 		}
 	}
@@ -422,6 +410,25 @@ public class Datasource {
 		} catch (SQLException e) {
 			System.out.println("Unable to search employee's salary: "
 					+ e.getMessage());
+		}
+	}
+	
+	public Salary queryEmployeeSalaryBasedOnId(int id) {
+		try {
+			Salary salary = new Salary();
+			prepStQuerySalaryBasedOnId.setInt(1, id);
+			ResultSet results = prepStQuerySalaryBasedOnId.executeQuery();
+
+			while (results.next()) {
+				salary.setId(results.getInt(ST_EMPLOYEE_ID_COLUMN));
+				salary.setSalary(results.getInt(ST_CURRENT_SALARY_COLUMN));
+			}
+			return salary;
+
+		} catch (SQLException e) {
+			System.out.println("Unable to search employee's salary based on id: "
+					+ e.getMessage());
+			return null;
 		}
 	}
 
@@ -559,6 +566,58 @@ public class Datasource {
 				System.out.println("Resetting default commit behaviour execption: " + e.getMessage());
 			}
 		}
+	}
+	
+	public Designation_Group queryDesignationGroup(String designation) {
+		try {
+			Designation_Group designationGroup = new Designation_Group();
+			prepStQueryDesignationGroup.setString(1, designation);
+			ResultSet results = prepStQueryDesignationGroup.executeQuery();
+
+			while (results.next()) {
+				designationGroup.setDesignation(results.getString(DGT_DESIGNATION_COULMN));
+				designationGroup.setSalaryGroup(results.getInt(DGT_SALARY_GROUP_COLUMN));
+			}
+			return designationGroup;
+
+		} catch (SQLException e) {
+			System.out.println("Unable to get info from Designation_Group based on designation: "
+					+ e.getMessage());
+			return null;
+		}
+		
+	}
+	
+	public Salary_Range querySalaryRange(int salaryGroup, int experience) {
+		try {
+			Salary_Range salary = new Salary_Range();
+			prepStQuerySalaryRange.setInt(1, salaryGroup);
+			prepStQuerySalaryRange.setInt(2, experience);
+			ResultSet results = prepStQuerySalaryRange.executeQuery();
+
+			while (results.next()) {
+				salary.setSalaryGroup(results.getInt(SRT_SALARY_GROUP_COLUMN));
+				salary.setExperince(results.getInt(SRT_EXPERIENCE_COULMN));
+				salary.setRange(results.getString(SRT_RANGE_COULMN));
+			}
+			return salary;
+
+		} catch (SQLException e) {
+			System.out.println("Unable to get info from Salary_Range based on salary group and experience: "
+					+ e.getMessage());
+			return null;
+		}
+		
+	}
+	
+	public EmployeeInfo queryEmployeeAllInfo(String lastName, String firstName) {
+		Employee emp = queryEmployeeByFullName(lastName, firstName);
+		Salary salary = queryEmployeeSalaryBasedOnId(emp.getId());
+		Designation_Group designationGroup = queryDesignationGroup(emp.getDesignation());
+		Salary_Range salaryRange = querySalaryRange(designationGroup.getSalaryGroup(), emp.getExperience());
+		
+		return new EmployeeInfo (emp, salary, salaryRange, designationGroup);
+		
 	}
 	
 }

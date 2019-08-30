@@ -50,6 +50,12 @@ public class Employee {
 		this.experience = experience;
 	}
 
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", designation="
+				+ designation + ", experience=" + experience + "]";
+	}
+
 	
 	
 	

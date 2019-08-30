@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -78,10 +80,10 @@ public class Main {
 //			}
 //		}
 		
-		EmployeeInfo employeeInfo = new EmployeeInfo();
-		employeeInfo = datasource.queryEmployeeAllInfo("Emma", "Johnson");
+		EmployeeInfo employeeInfo = datasource.queryEmployeeAllInfo("Johnson", "Emma");
 		System.out.println(employeeInfo.toString());
 //		datasource.insertNewEmployee("Hasworth", "Liana", "Project Manager", 3, 3800);
+
 		datasource.close();
 	}
 

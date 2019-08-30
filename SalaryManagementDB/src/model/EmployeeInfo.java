@@ -2,92 +2,54 @@ package model;
 
 public class EmployeeInfo{
 	
-	private int id;
-	private String firstName;
-	private String lastName;
-	private String designation;
-	private int experience;
-	private int salary;
-	private String salaryRange;
+	private Employee employee;
+	private Salary salary;
+	private Salary_Range salaryRange;
+	private Designation_Group designatioGroup;
 	
-	public EmployeeInfo() {}
-	
-	
-	public int getId() {
-		return id;
+	public EmployeeInfo(Employee employee, Salary salary, Salary_Range salaryRange, Designation_Group designatioGroup) {
+		this.employee = employee;
+		this.salary = salary;
+		this.salaryRange = salaryRange;
+		this.designatioGroup = designatioGroup;
 	}
 
-
-	public void setId(int id) {
-		this.id = id;
+	public Employee getEmployee() {
+		return employee;
 	}
 
-
-	public String getFirstName() {
-		return firstName;
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
 	}
 
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-
-	public String getLastName() {
-		return lastName;
-	}
-
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-
-	public String getDesignation() {
-		return designation;
-	}
-
-
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
-
-
-	public int getExperience() {
-		return experience;
-	}
-
-
-	public void setExperience(int experience) {
-		this.experience = experience;
-	}
-
-
-	public int getSalary() {
+	public Salary getSalary() {
 		return salary;
 	}
 
-
-	public void setSalary(int salary) {
+	public void setSalary(Salary salary) {
 		this.salary = salary;
 	}
 
-
-	public String getSalaryRange() {
+	public Salary_Range getSalaryRange() {
 		return salaryRange;
 	}
 
-
-	public void setSalaryRange(String salaryRange) {
+	public void setSalaryRange(Salary_Range salaryRange) {
 		this.salaryRange = salaryRange;
 	}
 
+	public Designation_Group getDesignatioGroup() {
+		return designatioGroup;
+	}
+
+	public void setDesignatioGroup(Designation_Group designatioGroup) {
+		this.designatioGroup = designatioGroup;
+	}
 
 	@Override
 	public String toString() {
-		return "EmployeeInfo [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", designation="
-				+ designation + ", experience=" + experience + ", salary=" + salary + ", salaryRange=" + salaryRange
-				+ "]";
+		return "Id " + employee.getId() +" Name: " + employee.getFirstName() + " " + employee.getLastName();
 	}
-
+	
+	
 }

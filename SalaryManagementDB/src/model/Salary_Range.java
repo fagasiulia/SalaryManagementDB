@@ -5,11 +5,7 @@ public class Salary_Range {
 	private int experince;
 	private String range;
 	
-	public Salary_Range(int salaryGroup, int experince, String range) {
-		this.salaryGroup = salaryGroup;
-		this.experince = experince;
-		this.range = range;
-	}
+	public Salary_Range() {}
 
 	public int getSalaryGroup() {
 		return salaryGroup;
@@ -33,6 +29,11 @@ public class Salary_Range {
 	
 	public void setRange(String range) {
 		this.range = range;
+	}
+
+	@Override
+	public String toString() {
+		return "Salary_Range [salaryGroup=" + salaryGroup + ", experince=" + experince + ", range=" + range + "]";
 	}
 	
 	
