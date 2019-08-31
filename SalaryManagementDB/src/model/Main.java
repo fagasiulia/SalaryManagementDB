@@ -69,20 +69,20 @@ public class Main {
 		
 //		EmployeeInfo employeeInfo = datasource.queryEmployeeAllInfo("Johnson", "Emma");
 //		System.out.println(employeeInfo.toString());
-		datasource.insertNewEmployee("Hasworth", "Liana", "Project Manager", 3, 3800);
+		datasource.insertNewEmployee("Chris", "Thomson", "IT Technician", 3, 36000);
 		
 		List<Employee> employeeList = datasource.queryEmployees(Datasource.ORDER_BY_DESC);
-		if(employeeList == null) {
-			System.out.println("No employee found");
-		}
-		else {
-			for(Employee e : employeeList) {
-				System.out.println("Id: " + e.getId()
-						+ " Name: " + e.getFirstName() + " " + e.getLastName()
-						+ " Designation: " + e.getDesignation() 
-						+ " Experience: " + e.getExperience());
-			}
-		}
+//		if(employeeList == null) {
+//			System.out.println("No employee found");
+//		}
+//		else {
+//			for(Employee e : employeeList) {
+//				System.out.println("Id: " + e.getId()
+//						+ " Name: " + e.getFirstName() + " " + e.getLastName()
+//						+ " Designation: " + e.getDesignation() 
+//						+ " Experience: " + e.getExperience());
+//			}
+//		}
 
 		datasource.close();
 	}

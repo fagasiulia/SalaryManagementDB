@@ -581,7 +581,7 @@ public class Datasource {
 				}
 			}
 		}catch(Exception e){
-			System.out.println("Insert salary exception: " + e.getMessage());
+			System.out.println("The employee is already in the system" + e.getMessage());
 			try{
 				System.out.println("Performing a rollback");
 				conn.rollback();
