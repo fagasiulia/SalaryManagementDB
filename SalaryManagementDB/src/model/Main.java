@@ -11,19 +11,6 @@ public class Main {
 			return;
 		}
 		
-//		List<Employee> employeeList = datasource.queryEmployees(Datasource.ORDER_BY_DESC);
-//		if(employeeList == null) {
-//			System.out.println("No employee found");
-//		}
-//		else {
-//			for(Employee e : employeeList) {
-//				System.out.println("Id: " + e.getId()
-//						+ " Name: " + e.getFirstName() + " " + e.getLastName()
-//						+ " Designation: " + e.getDesignation() 
-//						+ " Experience: " + e.getExperience());
-//			}
-//		}
-		
 //		List<Employee> employees = datasource.getEmployeeByLastName("Johnson");
 //		if(employees.isEmpty()) {
 //			System.out.println("No employee found");
@@ -80,9 +67,22 @@ public class Main {
 //			}
 //		}
 		
-		EmployeeInfo employeeInfo = datasource.queryEmployeeAllInfo("Johnson", "Emma");
-		System.out.println(employeeInfo.toString());
-//		datasource.insertNewEmployee("Hasworth", "Liana", "Project Manager", 3, 3800);
+//		EmployeeInfo employeeInfo = datasource.queryEmployeeAllInfo("Johnson", "Emma");
+//		System.out.println(employeeInfo.toString());
+		datasource.insertNewEmployee("Hasworth", "Liana", "Project Manager", 3, 3800);
+		
+		List<Employee> employeeList = datasource.queryEmployees(Datasource.ORDER_BY_DESC);
+		if(employeeList == null) {
+			System.out.println("No employee found");
+		}
+		else {
+			for(Employee e : employeeList) {
+				System.out.println("Id: " + e.getId()
+						+ " Name: " + e.getFirstName() + " " + e.getLastName()
+						+ " Designation: " + e.getDesignation() 
+						+ " Experience: " + e.getExperience());
+			}
+		}
 
 		datasource.close();
 	}

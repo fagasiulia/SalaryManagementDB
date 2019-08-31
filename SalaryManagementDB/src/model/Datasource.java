@@ -122,6 +122,15 @@ public class Datasource {
 			+ " FROM " + EMPLOYEE_TABLE + " WHERE " + ET_LAST_NAME_COLUMN
 			+ "=? AND " + ET_FIRST_NAME_COLUMN + "=?";
 
+//	INSERT INTO Employee (First_Name, Last_Name, Designation, Experience) SELECT =?, =? , =?, =?
+//	WHERE NOT EXISTS (SELECT 1 FROM Employee WHERE First_Name = ? AND Last_Name = ?)
+//	public static final String INSERT_EMPLOYEE = "INSERT INTO "
+//			+ EMPLOYEE_TABLE + " ( " + ET_FIRST_NAME_COLUMN + ", "
+//			+ ET_LAST_NAME_COLUMN + ", " + ET_DESIGNATION_COULMN + ", "
+//			+ ET_EXPERIENCE_COULMN + ") SELECT ?, ?, ?, ? "
+//			+ "WHERE NOT EXISTS (SELECT 1 FROM " + EMPLOYEE_TABLE 
+//			+ " WHERE " + ET_FIRST_NAME_COLUMN + "=? AND "
+//			+ ET_LAST_NAME_COLUMN + "=?";
 	public static final String INSERT_EMPLOYEE = "INSERT INTO "
 			+ EMPLOYEE_TABLE + " ( " + ET_FIRST_NAME_COLUMN + ", "
 			+ ET_LAST_NAME_COLUMN + ", " + ET_DESIGNATION_COULMN + ", "
@@ -182,7 +191,7 @@ public class Datasource {
 			// into Salary table, I passed another parameter to the
 			// PreparedStatement
 			prepStinsertIntoEmployee = conn.
-					prepareStatement(INSERT_EMPLOYEE,
+					prepareStatement(INSERT_EMPLOYEE, 
 					Statement.RETURN_GENERATED_KEYS);
 			prepStinsertIntoSalary = conn.
 					prepareStatement(INSERT_SALARY);
@@ -495,6 +504,27 @@ public class Datasource {
 		}
 	}
 
+//	private int insertEmployee(String lastName, String firstName, String designation, int experience) throws SQLException {
+//			prepStinsertIntoEmployee.setString(1, lastName);
+//			prepStinsertIntoEmployee.setString(2, firstName);
+//			prepStinsertIntoEmployee.setString(3, designation);
+//			prepStinsertIntoEmployee.setInt(4, experience);
+//			prepStinsertIntoEmployee.setString(5, firstName);
+//			prepStinsertIntoEmployee.setString(6, lastName);
+//
+//			int affectedRows = prepStinsertIntoEmployee.executeUpdate();
+//			if (affectedRows != 1) {
+//				throw new SQLException("Couln't insert employee!");
+//			}
+//			ResultSet generatedKeys = prepStinsertIntoEmployee.getGeneratedKeys();
+//			if (generatedKeys.next()) {
+//				// this will return employee's id
+//				return generatedKeys.getInt(1);
+//			} else {
+//				throw new SQLException("Couldn't get Employee's id");
+//			}
+//	}
+	
 	private int insertEmployee(String lastName, String firstName, String designation, int experience) throws SQLException {
 
 		// Check if the employee is already in the list
@@ -502,7 +532,7 @@ public class Datasource {
 		prepStQueryEmployeeFullName.setString(2, firstName);
 		ResultSet results = prepStQueryEmployeeFullName.executeQuery();
 
-		if (results.next()) {
+		if (results.next()){
 			// If it is we return the employee id
 			return results.getInt(1);
 		}
